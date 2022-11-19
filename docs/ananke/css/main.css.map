@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "main.css",
-	"sourceRoot": "/Users/jiakah/IdeaProjects/blog",
+	"sourceRoot": "/Volumes/IdeaProjects/blog",
 	"sources": [
 		"ananke/css/main.css"
 	],
