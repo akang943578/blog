@@ -57,7 +57,7 @@ RSA加密演算法是一种非对称加密演算法，在公开密钥加密和�
 RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
 模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。"><meta itemprop="datePublished" content="2022-11-19T23:09:48+08:00" />
 <meta itemprop="dateModified" content="2022-11-19T23:09:48+08:00" />
-<meta itemprop="wordCount" content="748">
+<meta itemprop="wordCount" content="998">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="RSA 算法证明"/>
 <meta name="twitter:description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
@@ -243,7 +243,7 @@ d
 76426760322838157396665112
 79233373417143396810270092
 798736308917
-</code></pre><p>事实上，人类已经分解的最大整数是1024位。比它更大的因数分解，还没有被报道过，因此2048位的密钥目前被认为是安全的。</p>
+</code></pre><p>事实上，这大概是人类已经分解的最大整数（232个十进制位，768个二进制位）。比它更大的因数分解，还没有被报道过，因此目前被破解的最长RSA密钥就是768位。实际应用中 RSA 的密钥长度为 1024 位，重要场合 2048 位，破解难度在目前这阶段基本不可能。</p>
 <h4 id="加密和解密">加密和解密</h4>
 <p>有了公钥和密钥，就能进行加密和解密了。</p>
 <h5 id="加密要用公钥-ne">加密要用公钥 (n,e)</h5>
@@ -351,10 +351,89 @@ tq = (kp)(m^(hφ(n) - 1)
 </code></pre><p>因为 n=pq，所以</p>
 <pre tabindex="0"><code>m^(hφ(n)+1) = m (mod n)
 </code></pre><p>原式得到证明。</p>
+<h3 id="python-代码演示">python 代码演示：</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -*- coding: utf-8 -*-</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># @Time    : 2022/11/28 14:28</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># @Author  : David Hao</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># @File    : rsa_demo.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># @Software: IntelliJ IDEA</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> itertools
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">find_mod_reverse</span>(e, r):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 这里直接用模逆元定义的概念，for循环找出d</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 也可以用扩展欧几里得算法或者欧拉定理计算出来</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> d <span style="color:#f92672">in</span> itertools<span style="color:#f92672">.</span>count(<span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e <span style="color:#f92672">*</span> d) <span style="color:#f92672">%</span> r <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> d
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_new_key</span>(p, q, e<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># e的定义是比r小和r互质的的正整数</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 【注意】: 这里取3是方便计算演示，一般使用65537</span>
+</span></span><span style="display:flex;"><span>    N <span style="color:#f92672">=</span> p <span style="color:#f92672">*</span> q
+</span></span><span style="display:flex;"><span>    r <span style="color:#f92672">=</span> (p <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> (q <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    d <span style="color:#f92672">=</span> find_mod_reverse(e, r)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> N, e, d
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rsa</span>(N, key, message):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 加密和解密本质上都是求指数和模的过程，所以可用参数不同的同一个函数</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 这也是为什么公私钥可以互换，但是不建议（原因是公钥出于种种原因一般都很短）</span>
+</span></span><span style="display:flex;"><span>    me <span style="color:#f92672">=</span> message <span style="color:#f92672">**</span> key
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> me <span style="color:#f92672">%</span> N
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">rsa_demo</span>(raw_message):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 取2个质数</span>
+</span></span><span style="display:flex;"><span>    p <span style="color:#f92672">=</span> <span style="color:#ae81ff">17</span>
+</span></span><span style="display:flex;"><span>    q <span style="color:#f92672">=</span> <span style="color:#ae81ff">23</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 获取公私钥</span>
+</span></span><span style="display:flex;"><span>    (N, e, d) <span style="color:#f92672">=</span> get_new_key(p, q)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;public key: (</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">, </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">)&#39;</span> <span style="color:#f92672">%</span> (N, e))
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;private key: (</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">, </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">)&#39;</span> <span style="color:#f92672">%</span> (N, d))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    full_m_c <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> en_m <span style="color:#f92672">in</span> list(raw_message):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 加密</span>
+</span></span><span style="display:flex;"><span>        m <span style="color:#f92672">=</span> ord(en_m)
+</span></span><span style="display:flex;"><span>        c <span style="color:#f92672">=</span> rsa(N, e, m)
+</span></span><span style="display:flex;"><span>        full_m_c <span style="color:#f92672">+=</span> chr(c)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    full_raw_message <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> en_c <span style="color:#f92672">in</span> list(full_m_c):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 解密</span>
+</span></span><span style="display:flex;"><span>        c <span style="color:#f92672">=</span> ord(en_c)
+</span></span><span style="display:flex;"><span>        m <span style="color:#f92672">=</span> rsa(N, d, c)
+</span></span><span style="display:flex;"><span>        full_raw_message <span style="color:#f92672">+=</span> chr(m)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;原始消息：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> raw_message)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;加密后的值：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> full_m_c)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;解密后的值：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> full_raw_message)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    rsa_demo(<span style="color:#e6db74">&#39;hello rsa algorithm!&#39;</span>)
+</span></span></code></pre></div><p>运行之后，得到输出：</p>
+<pre tabindex="0"><code>public key: (391, 3)
+private key: (391, 235)
+原始消息：hello rsa algorithm!
+加密后的值：ŜĭĭİĻ-ĔOĻOĭđİ-ĉŜ%Ť
+解密后的值：hello rsa algorithm!
+</code></pre><h3 id="ssh-keygen生成的id_rsa文件的格式">ssh-keygen生成的id_rsa文件的格式</h3>
+<p>上面说了那么多，我们都知道在 linux、mac 系统中，使用 <code>ssh-keygen</code> 生成公钥和私钥对默认保存在 <code>~/.ssh</code> 目录下，文件名分别是 id_rsa（私钥）和 id_rsa.pub（公钥）：</p>
+<pre tabindex="0"><code>[Local]  ~  ll ~/.ssh | grep rsa
+-rw-------  1 jiakah  staff   1.8K Oct 30  2020 id_rsa
+-rw-r--r--  1 jiakah  staff   406B Oct 30  2020 id_rsa.pub
+</code></pre><p>上文提到了公钥的格式是 (N, e)，私钥的格式是 (N, d)，那么到底这两个文件是如何保存这些信息的呢，这里我在知乎上找到一篇比较好的文章：<a href="https://zhuanlan.zhihu.com/p/33949377">ssh-keygen生成的id_rsa文件的格式</a></p>
+<p>讲的比较详细，直接看上面的文章即可，这里就不重复了。</p>
 <h3 id="引用">引用：</h3>
 <p><a href="https://abonege.github.io/2018/01/31/RSA%E7%AE%97%E6%B3%95%E8%AF%81%E6%98%8E/">RSA算法证明</a></p>
 <p><a href="https://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html">RSA算法原理（一）</a></p>
 <p><a href="https://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html">RSA算法原理（二）</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/75167507">RSA算法探秘</a></p>
 <ul class="pa0">
   
 </ul>

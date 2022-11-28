@@ -139,7 +139,7 @@ d
 79233373417143396810270092
 798736308917
 ```
-事实上，人类已经分解的最大整数是1024位。比它更大的因数分解，还没有被报道过，因此2048位的密钥目前被认为是安全的。
+事实上，这大概是人类已经分解的最大整数（232个十进制位，768个二进制位）。比它更大的因数分解，还没有被报道过，因此目前被破解的最长RSA密钥就是768位。实际应用中 RSA 的密钥长度为 1024 位，重要场合 2048 位，破解难度在目前这阶段基本不可能。
 
 #### 加密和解密
 有了公钥和密钥，就能进行加密和解密了。
@@ -324,6 +324,93 @@ m^(hφ(n)+1) = m (mod n)
 ```
 原式得到证明。
 
+### python 代码演示：
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# @Time    : 2022/11/28 14:28
+# @Author  : David Hao
+# @File    : rsa_demo.py
+# @Software: IntelliJ IDEA
+
+import itertools
+
+
+def find_mod_reverse(e, r):
+    # 这里直接用模逆元定义的概念，for循环找出d
+    # 也可以用扩展欧几里得算法或者欧拉定理计算出来
+    for d in itertools.count(1):
+        if (e * d) % r == 1:
+            return d
+
+
+def get_new_key(p, q, e=3):
+    # e的定义是比r小和r互质的的正整数
+    # 【注意】: 这里取3是方便计算演示，一般使用65537
+    N = p * q
+    r = (p - 1) * (q - 1)
+    d = find_mod_reverse(e, r)
+    return N, e, d
+
+
+def rsa(N, key, message):
+    # 加密和解密本质上都是求指数和模的过程，所以可用参数不同的同一个函数
+    # 这也是为什么公私钥可以互换，但是不建议（原因是公钥出于种种原因一般都很短）
+    me = message ** key
+    return me % N
+
+
+def rsa_demo(raw_message):
+    # 取2个质数
+    p = 17
+    q = 23
+    # 获取公私钥
+    (N, e, d) = get_new_key(p, q)
+    print('public key: (%s, %s)' % (N, e))
+    print('private key: (%s, %s)' % (N, d))
+
+    full_m_c = ''
+    for en_m in list(raw_message):
+        # 加密
+        m = ord(en_m)
+        c = rsa(N, e, m)
+        full_m_c += chr(c)
+
+    full_raw_message = ''
+    for en_c in list(full_m_c):
+        # 解密
+        c = ord(en_c)
+        m = rsa(N, d, c)
+        full_raw_message += chr(m)
+
+    print('原始消息：%s' % raw_message)
+    print('加密后的值：%s' % full_m_c)
+    print('解密后的值：%s' % full_raw_message)
+
+
+if __name__ == '__main__':
+    rsa_demo('hello rsa algorithm!')
+```
+运行之后，得到输出：
+```
+public key: (391, 3)
+private key: (391, 235)
+原始消息：hello rsa algorithm!
+加密后的值：ŜĭĭİĻ-ĔOĻOĭđİ-ĉŜ%Ť
+解密后的值：hello rsa algorithm!
+```
+
+### ssh-keygen生成的id_rsa文件的格式
+上面说了那么多，我们都知道在 linux、mac 系统中，使用 `ssh-keygen` 生成公钥和私钥对默认保存在 `~/.ssh` 目录下，文件名分别是 id_rsa（私钥）和 id_rsa.pub（公钥）：
+```
+[Local]  ~  ll ~/.ssh | grep rsa
+-rw-------  1 jiakah  staff   1.8K Oct 30  2020 id_rsa
+-rw-r--r--  1 jiakah  staff   406B Oct 30  2020 id_rsa.pub
+```
+上文提到了公钥的格式是 (N, e)，私钥的格式是 (N, d)，那么到底这两个文件是如何保存这些信息的呢，这里我在知乎上找到一篇比较好的文章：[ssh-keygen生成的id_rsa文件的格式](https://zhuanlan.zhihu.com/p/33949377)
+
+讲的比较详细，直接看上面的文章即可，这里就不重复了。
+
 ### 引用：
 
 [RSA算法证明](https://abonege.github.io/2018/01/31/RSA%E7%AE%97%E6%B3%95%E8%AF%81%E6%98%8E/)
@@ -331,3 +418,5 @@ m^(hφ(n)+1) = m (mod n)
 [RSA算法原理（一）](https://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html)
 
 [RSA算法原理（二）](https://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html)
+
+[RSA算法探秘](https://zhuanlan.zhihu.com/p/75167507)
