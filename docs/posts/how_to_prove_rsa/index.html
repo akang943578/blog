@@ -57,7 +57,7 @@ RSA加密演算法是一种非对称加密演算法，在公开密钥加密和�
 RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
 模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。"><meta itemprop="datePublished" content="2022-11-19T23:09:48+08:00" />
 <meta itemprop="dateModified" content="2022-11-19T23:09:48+08:00" />
-<meta itemprop="wordCount" content="1000">
+<meta itemprop="wordCount" content="992">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="RSA 算法证明"/>
 <meta name="twitter:description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
@@ -269,7 +269,7 @@ d
 <pre tabindex="0"><code>ｍ^e ≡ c (mod n)
 </code></pre><p>于是，c可以写成下面的形式：</p>
 <pre tabindex="0"><code>c = m^e - kn
-</code></pre><p>跟上面的解释同理，k 表示总能找到一个数 k，使得 <code>c - m^e</code> 可以表示成 n 的 k 倍。</p>
+</code></pre><p>跟上面的解释同理，k 表示总能找到一个数 k，使得 <code>m^e - c</code> 可以表示成 n 的 k 倍。</p>
 <p>将c代入要我们要证明的那个解密规则：</p>
 <pre tabindex="0"><code>(m^e - kn)^d ≡ m (mod n)
 </code></pre><p>它等同于求证</p>
@@ -344,11 +344,12 @@ m = 6, 6 和 7 也必然互质。
 <pre tabindex="0"><code>tq = m^(hφ(n)+1) - m
 tq = m(m^(hφ(n) - 1)
 tq = (kp)(m^(hφ(n) - 1)
-</code></pre><p>由于 p 是个大质数，所以 <code>(m^(hφ(n) - 1)</code> 是个整数，则 tq 是 kp 的倍数。</p>
-<p>假设 tq 是 kp 的 a 倍，则有 tq = akp，则 tq 是 p 的 ak 倍。所以 tq 也是 p 的倍数。</p>
-<p>由于 q 是质数，p 和 q 互质，且 q 不是 p 的倍数，所以 t 一定是 p 的倍数，也就是 t 必然能被 p 整除，即 <code>t=t'p</code></p>
+</code></pre><p>由于 p 是个大质数，所以 <code>(m^(hφ(n) - 1)</code> 是个整数，则 tq 是 kp 的倍数，tq 都已经是 kp 的倍数了，tq 当然也是 p 的倍数。</p>
+<p>由于 q 是质数，p 和 q 互质，那么 q 不是 p 的倍数，所以 t 一定是 p 的倍数，也就是 t 必然能被 p 整除，即 <code>t=t'p</code></p>
 <pre tabindex="0"><code>m^(hφ(n)+1) = t&#39;pq + m
-</code></pre><p>因为 n=pq，所以</p>
+</code></pre><p>代入 n=pq，得到</p>
+<pre tabindex="0"><code>m^(hφ(n)+1) = t&#39;n + m
+</code></pre><p>上式可以转写成：</p>
 <pre tabindex="0"><code>m^(hφ(n)+1) = m (mod n)
 </code></pre><p>原式得到证明。</p>
 <h3 id="python-代码演示">python 代码演示：</h3>
@@ -396,23 +397,23 @@ tq = (kp)(m^(hφ(n) - 1)
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;public key: (</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">, </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">)&#39;</span> <span style="color:#f92672">%</span> (N, e))
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;private key: (</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">, </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">)&#39;</span> <span style="color:#f92672">%</span> (N, d))
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    full_m_c <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> en_m <span style="color:#f92672">in</span> list(raw_message):
+</span></span><span style="display:flex;"><span>    cipher_message <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> char <span style="color:#f92672">in</span> list(raw_message):
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 加密</span>
-</span></span><span style="display:flex;"><span>        m <span style="color:#f92672">=</span> ord(en_m)
-</span></span><span style="display:flex;"><span>        c <span style="color:#f92672">=</span> rsa(N, e, m)
-</span></span><span style="display:flex;"><span>        full_m_c <span style="color:#f92672">+=</span> chr(c)
+</span></span><span style="display:flex;"><span>        char_unicode <span style="color:#f92672">=</span> ord(char)
+</span></span><span style="display:flex;"><span>        char_cipher_unicode <span style="color:#f92672">=</span> rsa(N, e, char_unicode)
+</span></span><span style="display:flex;"><span>        cipher_message <span style="color:#f92672">+=</span> chr(char_cipher_unicode)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    full_raw_message <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> en_c <span style="color:#f92672">in</span> list(full_m_c):
+</span></span><span style="display:flex;"><span>    decipher_raw_message <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> char <span style="color:#f92672">in</span> list(cipher_message):
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 解密</span>
-</span></span><span style="display:flex;"><span>        c <span style="color:#f92672">=</span> ord(en_c)
-</span></span><span style="display:flex;"><span>        m <span style="color:#f92672">=</span> rsa(N, d, c)
-</span></span><span style="display:flex;"><span>        full_raw_message <span style="color:#f92672">+=</span> chr(m)
+</span></span><span style="display:flex;"><span>        char_unicode <span style="color:#f92672">=</span> ord(char)
+</span></span><span style="display:flex;"><span>        char_decipher_unicode <span style="color:#f92672">=</span> rsa(N, d, char_unicode)
+</span></span><span style="display:flex;"><span>        decipher_raw_message <span style="color:#f92672">+=</span> chr(char_decipher_unicode)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;原始消息：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> raw_message)
-</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;加密后的值：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> full_m_c)
-</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;解密后的值：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> full_raw_message)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;加密后的值：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> cipher_message)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#39;解密后的值：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> decipher_raw_message)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:

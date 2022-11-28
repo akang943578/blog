@@ -41,23 +41,23 @@ def rsa_demo(raw_message):
     print('public key: (%s, %s)' % (N, e))
     print('private key: (%s, %s)' % (N, d))
 
-    full_m_c = ''
-    for en_m in list(raw_message):
+    cipher_message = ''
+    for char in list(raw_message):
         # 加密
-        m = ord(en_m)
-        c = rsa(N, e, m)
-        full_m_c += chr(c)
+        char_unicode = ord(char)
+        char_cipher_unicode = rsa(N, e, char_unicode)
+        cipher_message += chr(char_cipher_unicode)
 
-    full_raw_message = ''
-    for en_c in list(full_m_c):
+    decipher_raw_message = ''
+    for char in list(cipher_message):
         # 解密
-        c = ord(en_c)
-        m = rsa(N, d, c)
-        full_raw_message += chr(m)
+        char_unicode = ord(char)
+        char_decipher_unicode = rsa(N, d, char_unicode)
+        decipher_raw_message += chr(char_decipher_unicode)
 
     print('原始消息：%s' % raw_message)
-    print('加密后的值：%s' % full_m_c)
-    print('解密后的值：%s' % full_raw_message)
+    print('加密后的值：%s' % cipher_message)
+    print('解密后的值：%s' % decipher_raw_message)
 
 
 if __name__ == '__main__':

@@ -187,7 +187,7 @@ c^d ≡ m (mod n)
 ```
 c = m^e - kn
 ```
-跟上面的解释同理，k 表示总能找到一个数 k，使得 `c - m^e` 可以表示成 n 的 k 倍。
+跟上面的解释同理，k 表示总能找到一个数 k，使得 `m^e - c` 可以表示成 n 的 k 倍。
 
 将c代入要我们要证明的那个解密规则：
 ```
@@ -310,15 +310,17 @@ tq = m^(hφ(n)+1) - m
 tq = m(m^(hφ(n) - 1)
 tq = (kp)(m^(hφ(n) - 1)
 ```
-由于 p 是个大质数，所以 `(m^(hφ(n) - 1)` 是个整数，则 tq 是 kp 的倍数。
+由于 p 是个大质数，所以 `(m^(hφ(n) - 1)` 是个整数，则 tq 是 kp 的倍数，tq 都已经是 kp 的倍数了，tq 当然也是 p 的倍数。
 
-假设 tq 是 kp 的 a 倍，则有 tq = akp，则 tq 是 p 的 ak 倍。所以 tq 也是 p 的倍数。
-
-由于 q 是质数，p 和 q 互质，且 q 不是 p 的倍数，所以 t 一定是 p 的倍数，也就是 t 必然能被 p 整除，即 `t=t'p`
+由于 q 是质数，p 和 q 互质，那么 q 不是 p 的倍数，所以 t 一定是 p 的倍数，也就是 t 必然能被 p 整除，即 `t=t'p`
 ```
 m^(hφ(n)+1) = t'pq + m
 ```
-因为 n=pq，所以
+代入 n=pq，得到
+```
+m^(hφ(n)+1) = t'n + m
+```
+上式可以转写成：
 ```
 m^(hφ(n)+1) = m (mod n)
 ```
@@ -370,23 +372,23 @@ def rsa_demo(raw_message):
     print('public key: (%s, %s)' % (N, e))
     print('private key: (%s, %s)' % (N, d))
 
-    full_m_c = ''
-    for en_m in list(raw_message):
+    cipher_message = ''
+    for char in list(raw_message):
         # 加密
-        m = ord(en_m)
-        c = rsa(N, e, m)
-        full_m_c += chr(c)
+        char_unicode = ord(char)
+        char_cipher_unicode = rsa(N, e, char_unicode)
+        cipher_message += chr(char_cipher_unicode)
 
-    full_raw_message = ''
-    for en_c in list(full_m_c):
+    decipher_raw_message = ''
+    for char in list(cipher_message):
         # 解密
-        c = ord(en_c)
-        m = rsa(N, d, c)
-        full_raw_message += chr(m)
+        char_unicode = ord(char)
+        char_decipher_unicode = rsa(N, d, char_unicode)
+        decipher_raw_message += chr(char_decipher_unicode)
 
     print('原始消息：%s' % raw_message)
-    print('加密后的值：%s' % full_m_c)
-    print('解密后的值：%s' % full_raw_message)
+    print('加密后的值：%s' % cipher_message)
+    print('解密后的值：%s' % decipher_raw_message)
 
 
 if __name__ == '__main__':
