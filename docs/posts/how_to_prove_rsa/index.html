@@ -57,7 +57,7 @@ RSA加密演算法是一种非对称加密演算法，在公开密钥加密和�
 RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
 模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。"><meta itemprop="datePublished" content="2022-11-19T23:09:48+08:00" />
 <meta itemprop="dateModified" content="2022-11-19T23:09:48+08:00" />
-<meta itemprop="wordCount" content="998">
+<meta itemprop="wordCount" content="1000">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="RSA 算法证明"/>
 <meta name="twitter:description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
@@ -352,6 +352,7 @@ tq = (kp)(m^(hφ(n) - 1)
 <pre tabindex="0"><code>m^(hφ(n)+1) = m (mod n)
 </code></pre><p>原式得到证明。</p>
 <h3 id="python-代码演示">python 代码演示：</h3>
+<p><a href="https://github.com/akang943578/blog/blob/master/codes/rsa/rsa_demo.py">code 地址</a></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># -*- coding: utf-8 -*-</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># @Time    : 2022/11/28 14:28</span>

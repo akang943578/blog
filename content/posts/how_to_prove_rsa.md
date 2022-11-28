@@ -325,6 +325,7 @@ m^(hφ(n)+1) = m (mod n)
 原式得到证明。
 
 ### python 代码演示：
+[code 地址](https://github.com/akang943578/blog/blob/master/codes/rsa/rsa_demo.py)
 ```python
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
