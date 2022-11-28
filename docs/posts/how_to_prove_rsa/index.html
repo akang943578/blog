@@ -57,7 +57,7 @@ RSA加密演算法是一种非对称加密演算法，在公开密钥加密和�
 RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
 模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。"><meta itemprop="datePublished" content="2022-11-19T23:09:48+08:00" />
 <meta itemprop="dateModified" content="2022-11-19T23:09:48+08:00" />
-<meta itemprop="wordCount" content="992">
+<meta itemprop="wordCount" content="991">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="RSA 算法证明"/>
 <meta name="twitter:description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
@@ -328,23 +328,22 @@ m = 6, 6 和 7 也必然互质。
 </code></pre><p>由于 q 是质数，代入 φ(q) = q-1 得到：</p>
 <pre tabindex="0"><code>(kp)^(q-1) ≡ 1 (mod q)
 </code></pre><p>根据上面的数学概念 <code>6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)；</code> 得到</p>
-<pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) ≡ 1^(h(p-1) (mod q)
-</code></pre><p>由于 <code>1^(h(p-1)=1</code>（1的所有次方等于1)，得到：</p>
+<pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) ≡ 1^(h(p-1)) (mod q)
+</code></pre><p>由于 <code>1^(h(p-1)) = 1</code>（1的任意次方等于1)，得到：</p>
 <pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) ≡ 1 (mod q)
 </code></pre><p>根据上面的数学概念 <code>5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立)</code></p>
 <p>取特殊情况 c=d 都等于 kp，得到：</p>
 <pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) × kp ≡ kp (mod q)
 (kp)^(h(p-1)(q-1)+1) ≡ kp (mod q)
-</code></pre><p>代入 φ(n) = φ(pq) = φ(p)xφ(p) = (p-1)(q-1) 和 m = kp 得到：</p>
+</code></pre><p>代入 φ(n) = (p-1)(q-1) 和 m = kp 得到：</p>
 <pre tabindex="0"><code>m^(hφ(n)+1) ≡ m (mod q)
 </code></pre><p>将它改写成下面的等式</p>
 <pre tabindex="0"><code>m^(hφ(n)+1) = tq + m
 </code></pre><p>t 的解释同上面的 k，表示 q 的倍数。</p>
 <p>则有</p>
 <pre tabindex="0"><code>tq = m^(hφ(n)+1) - m
-tq = m(m^(hφ(n) - 1)
-tq = (kp)(m^(hφ(n) - 1)
-</code></pre><p>由于 p 是个大质数，所以 <code>(m^(hφ(n) - 1)</code> 是个整数，则 tq 是 kp 的倍数，tq 都已经是 kp 的倍数了，tq 当然也是 p 的倍数。</p>
+tq = m(m^(hφ(n)) - 1)
+</code></pre><p>由于 p 是个大质数，则 m = kp 是个比 p 更大的数，所以 <code>(m^(hφ(n)) - 1)</code> 是个整数，则 tq 是 m 的倍数，又 m = kp，tq 当然也是 p 的倍数。</p>
 <p>由于 q 是质数，p 和 q 互质，那么 q 不是 p 的倍数，所以 t 一定是 p 的倍数，也就是 t 必然能被 p 整除，即 <code>t=t'p</code></p>
 <pre tabindex="0"><code>m^(hφ(n)+1) = t&#39;pq + m
 </code></pre><p>代入 n=pq，得到</p>
