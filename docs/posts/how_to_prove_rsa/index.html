@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>RSA 算法证明 | 一只小垃圾</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
+RSA加密演算法是一种非对称加密演算法，在公开密钥加密和电子商业中被广泛使用。RSA是由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）在1977年一起提出的。当时他们三人都在麻省理工学院工作。RSA 就是他们三人姓氏开头字母拼在一起组成的。[1]
+1973年，在英国政府通讯总部工作的数学家克利福德·柯克斯（Clifford Cocks）在一个内部文件中提出了一个与之等效的算法，但该算法被列入机密，直到1997年才得到公开。[2]
+對极大整数做因数分解的難度決定了 RSA 算法的可靠性。換言之，對一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的 RSA 钥匙才可能被强力方式破解。到2020年为止，世界上还没有任何可靠的攻击RSA算法的方式。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被破解的。
+我在网上找了很多关于 RSA 算法的证明，但总是有某几个步骤语焉不详，花费了一些精力之后，终于搞懂了，因此记录一下。
+RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
+模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。">
+    <meta name="generator" content="Hugo 0.104.3" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="RSA 算法证明" />
+<meta property="og:description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
+RSA加密演算法是一种非对称加密演算法，在公开密钥加密和电子商业中被广泛使用。RSA是由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）在1977年一起提出的。当时他们三人都在麻省理工学院工作。RSA 就是他们三人姓氏开头字母拼在一起组成的。[1]
+1973年，在英国政府通讯总部工作的数学家克利福德·柯克斯（Clifford Cocks）在一个内部文件中提出了一个与之等效的算法，但该算法被列入机密，直到1997年才得到公开。[2]
+對极大整数做因数分解的難度決定了 RSA 算法的可靠性。換言之，對一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的 RSA 钥匙才可能被强力方式破解。到2020年为止，世界上还没有任何可靠的攻击RSA算法的方式。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被破解的。
+我在网上找了很多关于 RSA 算法的证明，但总是有某几个步骤语焉不详，花费了一些精力之后，终于搞懂了，因此记录一下。
+RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
+模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/how_to_prove_rsa/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-19T23:09:48+08:00" />
+<meta property="article:modified_time" content="2022-11-19T23:09:48+08:00" />
+
+<meta itemprop="name" content="RSA 算法证明">
+<meta itemprop="description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
+RSA加密演算法是一种非对称加密演算法，在公开密钥加密和电子商业中被广泛使用。RSA是由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）在1977年一起提出的。当时他们三人都在麻省理工学院工作。RSA 就是他们三人姓氏开头字母拼在一起组成的。[1]
+1973年，在英国政府通讯总部工作的数学家克利福德·柯克斯（Clifford Cocks）在一个内部文件中提出了一个与之等效的算法，但该算法被列入机密，直到1997年才得到公开。[2]
+對极大整数做因数分解的難度決定了 RSA 算法的可靠性。換言之，對一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的 RSA 钥匙才可能被强力方式破解。到2020年为止，世界上还没有任何可靠的攻击RSA算法的方式。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被破解的。
+我在网上找了很多关于 RSA 算法的证明，但总是有某几个步骤语焉不详，花费了一些精力之后，终于搞懂了，因此记录一下。
+RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
+模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。"><meta itemprop="datePublished" content="2022-11-19T23:09:48+08:00" />
+<meta itemprop="dateModified" content="2022-11-19T23:09:48+08:00" />
+<meta itemprop="wordCount" content="741">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RSA 算法证明"/>
+<meta name="twitter:description" content="RSA 算法证明 RSA 算法是加密学中非常重要的一个算法，具体介绍援引 wiki百科：
+RSA加密演算法是一种非对称加密演算法，在公开密钥加密和电子商业中被广泛使用。RSA是由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）在1977年一起提出的。当时他们三人都在麻省理工学院工作。RSA 就是他们三人姓氏开头字母拼在一起组成的。[1]
+1973年，在英国政府通讯总部工作的数学家克利福德·柯克斯（Clifford Cocks）在一个内部文件中提出了一个与之等效的算法，但该算法被列入机密，直到1997年才得到公开。[2]
+對极大整数做因数分解的難度決定了 RSA 算法的可靠性。換言之，對一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的 RSA 钥匙才可能被强力方式破解。到2020年为止，世界上还没有任何可靠的攻击RSA算法的方式。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被破解的。
+我在网上找了很多关于 RSA 算法的证明，但总是有某几个步骤语焉不详，花费了一些精力之后，终于搞懂了，因此记录一下。
+RSA 用到的几个数学概念： 在进行 RSA 算法证明之前，我们先介绍几个数学概念：
+模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n) φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9 欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n) 欧拉函数：如果n为质数，φ(n)=n-1 欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1) 同余性质： 1).反身性：a≡a (mod n)； 2).对称性：若a≡b(mod n)，则b≡a (mod n)； 3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)； 4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a&#43;c≡b&#43;d(mod n)； 5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立) 6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)； 以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。"/>
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        一只小垃圾
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        POSTS
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">RSA 算法证明</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2022-11-19T23:09:48+08:00">November 19, 2022</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h2 id="rsa-算法证明">RSA 算法证明</h2>
+<p>RSA 算法是加密学中非常重要的一个算法，具体介绍援引 <a href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">wiki百科</a>：</p>
+<blockquote>
+<p>RSA加密演算法是一种非对称加密演算法，在公开密钥加密和电子商业中被广泛使用。RSA是由罗纳德·李维斯特（Ron Rivest）、阿迪·萨莫尔（Adi Shamir）和伦纳德·阿德曼（Leonard Adleman）在1977年一起提出的。当时他们三人都在麻省理工学院工作。RSA 就是他们三人姓氏开头字母拼在一起组成的。[1]</p>
+</blockquote>
+<blockquote>
+<p>1973年，在英国政府通讯总部工作的数学家克利福德·柯克斯（Clifford Cocks）在一个内部文件中提出了一个与之等效的算法，但该算法被列入机密，直到1997年才得到公开。[2]</p>
+</blockquote>
+<blockquote>
+<p>對极大整数做因数分解的難度決定了 RSA 算法的可靠性。換言之，對一极大整数做因数分解愈困难，RSA 算法愈可靠。假如有人找到一种快速因数分解的算法的话，那么用 RSA 加密的信息的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的 RSA 钥匙才可能被强力方式破解。到2020年为止，世界上还没有任何可靠的攻击RSA算法的方式。只要其钥匙的长度足够长，用RSA加密的信息实际上是不能被破解的。</p>
+</blockquote>
+<p>我在网上找了很多关于 RSA 算法的证明，但总是有某几个步骤语焉不详，花费了一些精力之后，终于搞懂了，因此记录一下。</p>
+<h3 id="rsa-用到的几个数学概念">RSA 用到的几个数学概念：</h3>
+<p>在进行 RSA 算法证明之前，我们先介绍几个数学概念：</p>
+<pre tabindex="0"><code>模反元素：如果两个正整数a和n互质，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，即ab ≡ 1 (mod n)
+φ(n):小于n且与n互质的正整数的个数，比如φ(10) = 4,因为小于10且与10互质的的数为1，3，7，9
+欧拉定理：m和n互质，则m^φ(n) ≡ 1 (mod n)
+欧拉函数：如果n为质数，φ(n)=n-1
+欧拉函数是积性函数：若m,n互质， φ(mxn)=(m-1)(n-1)
+同余性质：
+1).反身性：a≡a (mod n)；
+2).对称性：若a≡b(mod n)，则b≡a (mod n)；
+3).传递性：若a≡b(mod n)，b≡c(mod n)，则a≡c(mod n)；
+4).同余式相加：若a≡b(mod n)，c≡d(mod n)，则a+c≡b+d(mod n)；
+5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立)
+6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)；
+</code></pre><p>以上都是已经被证明的数学定律，由于篇幅以及智商（占主要）原因，本篇不研究其证明过程，直接拿来使用。</p>
+<h3 id="rsa-算法加解密过程">RSA 算法加解密过程：</h3>
+<pre tabindex="0"><code>随机选取两个大质数 p 和 q，n = pq, 再随机选取一个整数 e，e 与 φ(n) 互质, (e 通常为65537), 再次计算一个 d, 它是 e 对于 φ(n) 的模反元素，也就是 ed ≡ 1 (mod φ(n))
+加密过程：m^e ≡ c (mod n)，其中 m 为原信息（注意m &lt; n），c 为加密信息，(n、e) 为公开密钥。
+解密过程：c^d ≡ m (mod n)，其中 (n、d) 为解密密钥。
+</code></pre><h3 id="rsa-算法加解密举例">RSA 算法加解密举例</h3>
+<p>假设爱丽丝要与鲍勃进行加密通信，她该怎么生成公钥和私钥呢？</p>
+<h4 id="第一步随机选择两个不相等的质数p和q">第一步，随机选择两个不相等的质数p和q。</h4>
+<p>爱丽丝选择了61和53。（实际应用中，这两个质数越大，就越难破解。）</p>
+<h4 id="第二步计算p和q的乘积n">第二步，计算p和q的乘积n。</h4>
+<p>爱丽丝就把61和53相乘。</p>
+<pre tabindex="0"><code>n = 61×53 = 3233
+</code></pre><p>n的长度就是密钥长度。3233写成二进制是110010100001，一共有12位，所以这个密钥就是12位。实际应用中，RSA密钥一般是1024位，重要场合则为2048位。</p>
+<h4 id="第三步计算n的欧拉函数φn">第三步，计算n的欧拉函数φ(n)。</h4>
+<p>根据公式：</p>
+<pre tabindex="0"><code>φ(n) = (p-1)(q-1)
+</code></pre><p>爱丽丝算出φ(3233)等于60×52，即3120。</p>
+<h4 id="第四步随机选择一个整数e条件是1-e--φn且e与φn-互质">第四步，随机选择一个整数e，条件是1&lt; e &lt; φ(n)，且e与φ(n) 互质。</h4>
+<p>爱丽丝就在1到3120之间，随机选择了17。（实际应用中，常常选择65537。）</p>
+<h4 id="第五步计算e对于φn的模反元素d">第五步，计算e对于φ(n)的模反元素d。</h4>
+<p>所谓<a href="https://zh.wikipedia.org/wiki/%E6%A8%A1%E5%8F%8D%E5%85%83%E7%B4%A0">&ldquo;模反元素&rdquo;</a>就是指有一个整数d，可以使得ed被φ(n)除的余数为1。</p>
+<pre tabindex="0"><code>ed ≡ 1 (mod φ(n))
+</code></pre><p>这个式子等价于</p>
+<pre tabindex="0"><code>ed - 1 = kφ(n)
+</code></pre><p>注意这里的 k，并不是某一个具体的值，而是说，由于 ed 整除 φ(n) 余1，则 <code>ed - 1</code> 总可以表示成 φ(n) 的 k 倍。</p>
+<p>于是，带入 <code>e = 17，φ(n) = (p-1)(q-1) = 60×52 = 3120</code>:</p>
+<pre tabindex="0"><code>17d - 1 = 3120k
+</code></pre><p>这个方程可以用<a href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95">&ldquo;扩展欧几里得算法&rdquo;</a>求解，此处省略具体过程。总之，爱丽丝算出一组整数解为 (d,k)=(2753,15)，即 d=2753。</p>
+<p>至此所有计算完成。</p>
+<h4 id="第六步将n和e封装成公钥n和d封装成私钥">第六步，将n和e封装成公钥，n和d封装成私钥。</h4>
+<p>在爱丽丝的例子中，n=3233，e=17，d=2753，所以公钥就是 (3233,17)，私钥就是（3233, 2753）。</p>
+<p>实际应用中，公钥和私钥的数据都采用 <a href="https://zh.wikipedia.org/zh-cn/ASN.1">ASN.1</a> 格式表达。</p>
+<h3 id="rsa算法的可靠性">RSA算法的可靠性</h3>
+<p>回顾上面的密钥生成步骤，一共出现六个数字：</p>
+<pre tabindex="0"><code>p
+q
+n
+φ(n)
+e
+d
+</code></pre><p>这六个数字之中，公钥用到了两个（n和e），其余四个数字都是不公开的。其中最关键的是d，因为n和d组成了私钥，一旦d泄漏，就等于私钥泄漏。</p>
+<h4 id="那么有无可能在已知n和e的情况下推导出d">那么，有无可能在已知n和e的情况下，推导出d？</h4>
+<pre tabindex="0"><code>（1）ed≡1 (mod φ(n))。只有知道e和φ(n)，才能算出d。
+（2）φ(n)=(p-1)(q-1)。只有知道p和q，才能算出φ(n)。
+（3）n=pq。只有将n因数分解，才能算出p和q。
+</code></pre><p>结论：如果n可以被因数分解，d就可以算出，也就意味着私钥被破解。</p>
+<p>可是，大整数的因数分解，是一件非常困难的事情。目前，除了暴力破解，还没有发现别的有效方法。维基百科这样写道：</p>
+<blockquote>
+<p>&ldquo;对极大整数做因数分解的难度决定了RSA算法的可靠性。换言之，对一极大整数做因数分解愈困难，RSA算法愈可靠。</p>
+</blockquote>
+<blockquote>
+<p>假如有人找到一种快速因数分解的算法，那么RSA的可靠性就会极度下降。但找到这样的算法的可能性是非常小的。今天只有短的RSA密钥才可能被暴力破解。到2008年为止，世界上还没有任何可靠的攻击RSA算法的方式。</p>
+</blockquote>
+<blockquote>
+<p>只要密钥长度足够长，用RSA加密的信息实际上是不能被解破的。&rdquo;</p>
+</blockquote>
+<p>举例来说，你可以对3233进行因数分解（61×53），但是你没法对下面这个整数进行因数分解。</p>
+<pre tabindex="0"><code>12301866845301177551304949
+58384962720772853569595334
+79219732245215172640050726
+36575187452021997864693899
+56474942774063845925192557
+32630345373154826850791702
+61221429134616704292143116
+02221240479274737794080665
+351419597459856902143413
+</code></pre><p>它等于这样两个质数的乘积：</p>
+<pre tabindex="0"><code>33478071698956898786044169
+84821269081770479498371376
+85689124313889828837938780
+02287614711652531743087737
+814467999489
+　　　　×
+36746043666799590428244633
+79962795263227915816434308
+76426760322838157396665112
+79233373417143396810270092
+798736308917
+</code></pre><p>事实上，人类已经分解的最大整数是1024位。比它更大的因数分解，还没有被报道过，因此2048位的密钥目前被认为是安全的。</p>
+<h4 id="加密和解密">加密和解密</h4>
+<p>有了公钥和密钥，就能进行加密和解密了。</p>
+<h5 id="加密要用公钥-ne">加密要用公钥 (n,e)</h5>
+<p>假设鲍勃要向爱丽丝发送加密信息m，他就要用爱丽丝的公钥 (n,e) 对m进行加密。这里需要注意，m必须是整数（字符串可以取ascii值或unicode值），且m必须小于n。</p>
+<p>所谓&quot;加密&quot;，就是算出下式的c：</p>
+<pre tabindex="0"><code>m^e ≡ c (mod n)
+</code></pre><p>爱丽丝的公钥是 (3233, 17)，鲍勃的m假设是65，那么可以算出下面的等式：</p>
+<pre tabindex="0"><code>65^17 ≡ 2790 (mod 3233)
+</code></pre><p>于是，c等于2790，鲍勃就把2790发给了爱丽丝。</p>
+<h5 id="解密要用私钥nd">解密要用私钥(n,d)</h5>
+<p>爱丽丝拿到鲍勃发来的2790以后，就用自己的私钥(3233, 2753) 进行解密。可以证明，下面的等式一定成立：</p>
+<pre tabindex="0"><code>c^d ≡ m (mod n)
+</code></pre><p>也就是说，c的d次方除以n的余数为m。现在，c等于2790，私钥是(3233, 2753)，那么，爱丽丝算出</p>
+<pre tabindex="0"><code>2790^2753 ≡ 65 (mod 3233)
+</code></pre><p>因此，爱丽丝知道了鲍勃加密前的原文就是65。</p>
+<p>至此，&ldquo;加密&ndash;解密&quot;的整个过程全部完成。</p>
+<p>我们可以看到，如果不知道d，就没有办法从c求出m。而前面已经说过，要知道d就必须分解n，这是极难做到的，所以RSA算法保证了通信安全。</p>
+<p>你可能会问，公钥(n,e) 只能加密小于n的整数m，那么如果要加密大于n的整数，该怎么办？有两种解决方法：一种是把长信息分割成若干段短消息，每段分别加密；另一种是先选择一种&quot;对称性加密算法&rdquo;（比如DES），用这种算法的密钥加密信息，再用RSA公钥加密DES密钥。</p>
+<h3 id="rsa-算法加解密证明">RSA 算法加解密证明：</h3>
+<p>下面，我们来证明，为什么用私钥解密，一定可以正确地得到m。也就是证明下面这个式子：</p>
+<pre tabindex="0"><code>c^d ≡ m (mod n)
+</code></pre><p>因为，根据加密规则</p>
+<pre tabindex="0"><code>ｍ^e ≡ c (mod n)
+</code></pre><p>于是，c可以写成下面的形式：</p>
+<pre tabindex="0"><code>c = m^e - kn
+</code></pre><p>跟上面的解释同理，k 表示总能找到一个数 k，使得 <code>c - m^e</code> 可以表示成 n 的 k 倍。</p>
+<p>将c代入要我们要证明的那个解密规则：</p>
+<pre tabindex="0"><code>(m^e - kn)^d ≡ m (mod n)
+</code></pre><p>它等同于求证</p>
+<pre tabindex="0"><code>m^ed ≡ m (mod n)
+
+    这里可能有些跳跃，试想，如果 d=2，则
+      (m^e - kn)^2 
+    = (m^e - kn)(m^e - kn)
+    = (m^e)(m^e) - kn(m^e) - kn(m^e) + (kn)^2
+    = m^2e - 2kn(m^e) + (kn)^2
+    由于 2kn(m^e) 和 (kn)^2 都含有因式 n，因此都可以被 n 整除。
+    所以上面这个式子等同于求证 m^2e ≡ m (mod n)
+    同理，将 d 推广到 &gt;2 的情况，由于因式分解产生的中间项和最后项都含有因式 n，因此总能够被 n 整除。
+    所以只剩下第一项，也就是 m^ed 有可能不被 n 整除。
+    故：(m^e - kn)^d ≡ m (mod n) 等同于求证 m^ed ≡ m (mod n)
+</code></pre><p>由于</p>
+<pre tabindex="0"><code>ed ≡ 1 (mod φ(n))
+</code></pre><p>所以</p>
+<pre tabindex="0"><code>ed = hφ(n)+1
+</code></pre><p>h 的解释同上面的 k，表示φ(n)的倍数。</p>
+<p>将ed代入：</p>
+<pre tabindex="0"><code>m^(hφ(n)+1) ≡ m (mod n)
+</code></pre><p>接下来，分成两种情况证明上面这个式子。</p>
+<h4 id="1-m与n互质">(1) m与n互质。</h4>
+<p>根据欧拉定理，此时</p>
+<pre tabindex="0"><code>m^φ(n) ≡ 1 (mod n)
+</code></pre><p>根据上面的数学概念 <code>6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)；</code> 得到</p>
+<pre tabindex="0"><code>(m^φ(n))^h ≡ 1^h (mod n)
+</code></pre><p>由于1的任意次方都是1，所以</p>
+<pre tabindex="0"><code>(m^φ(n))^h ≡ 1 (mod n)
+</code></pre><p>根据上面的数学概念 <code>5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立)</code></p>
+<p>取特殊情况 c=d 都等于 m，得到：</p>
+<pre tabindex="0"><code>(m^φ(n))^h × m ≡ m (mod n)
+</code></pre><p>则得到</p>
+<pre tabindex="0"><code>m^(hφ(n)+1) ≡ m (mod n)
+</code></pre><p>原式得到证明。</p>
+<h4 id="2-m与n不是互质关系">(2) m与n不是互质关系。</h4>
+<p>此时，由于n等于质数p和q的乘积，所以m必然等于kp或kq。</p>
+<p>以 m = kp为例，这时k与q必然互质</p>
+<pre tabindex="0"><code>这里有些难理解，举例：p = 3, q = 7, 则 n = 21
+若 m = 6，则 m 与 n 不是互质关系，此时 m = 2p，则 k = 2
+此时 2 和 7 必然互质。
+
+因为 m = kp，n = pq，且 m &lt; n，
+所以 k &lt; q，由于 q 是质数，所以 k 和 q 必然互质。
+</code></pre><p>因为k与q必然互质，则 kp(也就是m) 与 q 也必然互质</p>
+<pre tabindex="0"><code>还是有些难理解，继续上面的例子：
+m = 6, 6 和 7 也必然互质。
+
+因为 m = kp，n = pq，且 m &lt; n，
+如果 m 已经是 p 的倍数，此时 m 还是 q 的倍数，这样 m 就是 p 和 q 的公倍数。
+由于 p 和 q 互质，所以 p 和 q 的最小公倍数是 n。则 m &gt;= n，不成立。
+所以 m 不是 q 的倍数。由于 q 是质数，所以只要 m 不是 q 的倍数，则 m 和 q 互质。
+</code></pre><p>由于 kp(也就是m) 与 q 互质，根据欧拉定理，下面的式子成立：</p>
+<pre tabindex="0"><code>(kp)^φ(q) ≡ 1 (mod q)
+</code></pre><p>由于 q 是质数，代入 φ(q) = q-1 得到：</p>
+<pre tabindex="0"><code>(kp)^(q-1) ≡ 1 (mod q)
+</code></pre><p>根据上面的数学概念 <code>6).幂运算：如果a≡b(mod n)，那么a^k≡b^k(mod n)；</code> 得到</p>
+<pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) ≡ 1^(h(p-1) (mod q)
+</code></pre><p>由于 <code>1^(h(p-1)=1</code>（1的所有次方等于1)，得到：</p>
+<pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) ≡ 1 (mod q)
+</code></pre><p>根据上面的数学概念 <code>5).同余式相乘：若a≡b(mod n)，c≡d(mod n)，则axc≡bxd(mod n)。(特殊情况c=d下也成立)</code></p>
+<p>取特殊情况 c=d 都等于 kp，得到：</p>
+<pre tabindex="0"><code>[(kp)^(q-1)]^(h(p-1)) × kp ≡ kp (mod q)
+(kp)^(h(p-1)(q-1)+1) ≡ kp (mod q)
+</code></pre><p>代入 φ(n) = φ(pq) = φ(p)xφ(p) = (p-1)(q-1) 和 m = kp 得到：</p>
+<pre tabindex="0"><code>m^(hφ(n)+1) ≡ m (mod q)
+</code></pre><p>将它改写成下面的等式</p>
+<pre tabindex="0"><code>m^(hφ(n)+1) = tq + m
+</code></pre><p>t 的解释同上面的 k，表示 q 的倍数。</p>
+<p>则有</p>
+<pre tabindex="0"><code>tq = m^(hφ(n)+1) - m
+tq = m(m^(hφ(n) - 1)
+tq = (kp)(m^(hφ(n) - 1)
+</code></pre><p>由于 p 是个大质数，所以 <code>(m^(hφ(n) - 1)</code> 是个整数，则 tq 是 kp 的倍数。</p>
+<p>假设 tq 是 kp 的 a 倍，则有 tq = akp，则 tq 是 p 的 ak 倍。所以 tq 也是 p 的倍数。</p>
+<p>由于 q 是质数，且 q 不是 p 的倍数，所以 t 一定是 p 的倍数，也就是 t 必然能被 p 整除，即 <code>t=t'p</code></p>
+<pre tabindex="0"><code>m^(hφ(n)+1) = t&#39;pq + m
+</code></pre><p>因为 n=pq，所以</p>
+<pre tabindex="0"><code>m^(hφ(n)+1) = m (mod n)
+</code></pre><p>原式得到证明。</p>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://example.org/" >
+    &copy;  一只小垃圾 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>
