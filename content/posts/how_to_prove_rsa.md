@@ -323,3 +323,11 @@ m^(hφ(n)+1) = t'pq + m
 m^(hφ(n)+1) = m (mod n)
 ```
 原式得到证明。
+
+### 引用：
+
+[RSA算法证明](https://abonege.github.io/2018/01/31/RSA%E7%AE%97%E6%B3%95%E8%AF%81%E6%98%8E/)
+
+[RSA算法原理（一）](https://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html)
+
+[RSA算法原理（二）](https://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html)
